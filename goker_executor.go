@@ -63,7 +63,7 @@ func (g *GoKerExecuter) Build() {
 
 func (g *GoKerExecuter) Run() *SingleRunResult {
 	command := "%v -test.v -test.count %v -test.failfast -test.timeout %v -test.trace %s"
-	vals := []interface{}{g.Binary, g.Count, g.Timeout, utils.PathToTrace(g.Bug.SubType, g.Bug.SubSubType, g.Bug.ID) + ".trace"}
+	vals := []interface{}{g.Binary, g.Count, g.Timeout, utils.PathToTrace(g.Bug.Type.String(), g.Bug.SubType, g.Bug.SubSubType, g.Bug.ID)}
 	if g.Cpu != 0 {
 		command += " -test.cpu %v"
 		vals = append(vals, g.Cpu)
