@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"trall/utils"
 )
 
 type GoKerExecuter struct {
@@ -61,16 +62,8 @@ func (g *GoKerExecuter) Build() {
 }
 
 func (g *GoKerExecuter) Run() *SingleRunResult {
-	wd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	traceDir := filepath.Join(filepath.Dir(wd), "results", "gobench", g.Bug.SubType, strings.ReplaceAll(g.Bug.SubSubType, " ", "_"))
-	if err = os.MkdirAll(traceDir, os.ModePerm); err != nil {
-		panic(err)
-	}
 	command := "%v -test.v -test.count %v -test.failfast -test.timeout %v -test.trace %s"
-	vals := []interface{}{g.Binary, g.Count, g.Timeout, filepath.Join(traceDir, g.Bug.ID+".trace")}
+	vals := []interface{}{g.Binary, g.Count, g.Timeout, utils.PathToTrace(g.Bug.SubType, g.Bug.SubSubType, g.Bug.ID) + ".trace"}
 	if g.Cpu != 0 {
 		command += " -test.cpu %v"
 		vals = append(vals, g.Cpu)
@@ -79,9 +72,9 @@ func (g *GoKerExecuter) Run() *SingleRunResult {
 
 	result := g.next()
 	result.Command = strings.Join(args, " ")
-	fmt.Println(result.Command)
+	//fmt.Println(result.Command)
 	result.process(func() {
-		//var err error
+		var err error
 		result.Logs, err = exec.Command(args[0], args[1:]...).CombinedOutput()
 		if err != nil {
 			result.ExitCode = 1
