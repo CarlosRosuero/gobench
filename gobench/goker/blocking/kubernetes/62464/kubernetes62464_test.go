@@ -80,19 +80,19 @@ func NewPolicyAndManager() (*staticPolicy, *manager) {
 	return p, m
 }
 
-///
-/// G1 									G2
-/// m.reconcileState()
-/// m.state.GetCPUSetOrDefault()
-/// s.RLock()
-/// s.GetCPUSet()
-/// 									p.RemoveContainer()
-/// 									s.GetDefaultCPUSet()
-/// 									s.SetDefaultCPUSet()
-/// 									s.Lock()
-/// s.RLock()
-/// ---------------------G1,G2 deadlock---------------------
-///
+// /
+// / G1 									G2
+// / m.reconcileState()
+// / m.state.GetCPUSetOrDefault()
+// / s.RLock()
+// / s.GetCPUSet()
+// / 									p.RemoveContainer()
+// / 									s.GetDefaultCPUSet()
+// / 									s.SetDefaultCPUSet()
+// / 									s.Lock()
+// / s.RLock()
+// / ---------------------G1,G2 deadlock---------------------
+// /
 func TestKubernetes62464(t *testing.T) {
 	p, m := NewPolicyAndManager()
 	go m.reconcileState()

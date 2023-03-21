@@ -53,21 +53,21 @@ func (wbs *watchBroadcasts) update(wb *watchBroadcast) {
 	}
 }
 
-///
-/// G1						G2					G3
-/// newWatchBroadcasts()
-///	wbs.update()
-/// wbs.updatec <-
-/// return
-///							<-wbs.updatec
-///							wbs.coalesce()
-///												wbs.stop()
-///												wbs.mu.Lock()
-///												close(wbs.updatec)
-///												<-wbs.donec
-///							wbs.mu.Lock()
-///---------------------G2,G3 deadlock-------------------------
-///
+// /
+// / G1						G2					G3
+// / newWatchBroadcasts()
+// /	wbs.update()
+// / wbs.updatec <-
+// / return
+// /							<-wbs.updatec
+// /							wbs.coalesce()
+// /												wbs.stop()
+// /												wbs.mu.Lock()
+// /												close(wbs.updatec)
+// /												<-wbs.donec
+// /							wbs.mu.Lock()
+// /---------------------G2,G3 deadlock-------------------------
+// /
 func TestEtcd(t *testing.T) {
 	wbs := newWatchBroadcasts() // G1
 	wbs.update(&watchBroadcast{})

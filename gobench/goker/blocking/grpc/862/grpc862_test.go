@@ -86,14 +86,14 @@ func DialContext(ctx context.Context) (conn *ClientConn) {
 	return conn
 }
 
-///
-/// G1 					G2
-/// DialContext()
-/// 					cc.resetAddrConn()
-/// 					resetTransport()
-/// 					<-ac.ctx.Done()
-/// --------------G2 leak------------------
-///
+// /
+// / G1 					G2
+// / DialContext()
+// / 					cc.resetAddrConn()
+// / 					resetTransport()
+// / 					<-ac.ctx.Done()
+// / --------------G2 leak------------------
+// /
 func TestGrpc862(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	go DialContext(ctx) // G1

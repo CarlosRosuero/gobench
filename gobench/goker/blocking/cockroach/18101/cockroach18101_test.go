@@ -41,18 +41,18 @@ func splitAndScatter(ctx context.Context, readyForImportCh chan bool) {
 	}
 }
 
-///
-/// G1					G2					helper goroutine
-/// restore()
-/// 					splitAndScatter()
-/// <-readyForImportCh
-/// 					readyForImportCh<-
-/// ...					...
-/// 										cancel()
-/// return
-/// 					readyForImportCh<-
-/// -----------------------G2 leak-------------------------
-///
+// /
+// / G1					G2					helper goroutine
+// / restore()
+// / 					splitAndScatter()
+// / <-readyForImportCh
+// / 					readyForImportCh<-
+// / ...					...
+// / 										cancel()
+// / return
+// / 					readyForImportCh<-
+// / -----------------------G2 leak-------------------------
+// /
 func TestCockroach18101(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	go restore(ctx) // G1

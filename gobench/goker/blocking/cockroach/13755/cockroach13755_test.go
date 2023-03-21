@@ -34,12 +34,12 @@ func (rs *Rows) close(err error) {
 	// rs.cancel()
 }
 
-/// G1 						G2
-/// initContextClose()
-/// 						awaitDone()
-/// 						<-tx.ctx.Done()
-/// return
-/// ---------------G2 leak-----------------
+// / G1 						G2
+// / initContextClose()
+// / 						awaitDone()
+// / 						<-tx.ctx.Done()
+// / return
+// / ---------------G2 leak-----------------
 func TestCockroach13755(t *testing.T) {
 	rs := &Rows{}
 	rs.initContextClose(context.Background())

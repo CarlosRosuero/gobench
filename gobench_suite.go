@@ -13,11 +13,11 @@ type SuiteConfig struct {
 	ExecEnvConfig
 	Name string
 
-	Type     SubBenchType
-	BugIDs   []string
-	MustFork bool
+	Type        SubBenchType
+	BugIDs      []string
+	MustFork    bool
 	WorkDirName string
-	Jobs     int
+	Jobs        int
 
 	ExecutorCreator func(config ExecBugConfig) Executor
 

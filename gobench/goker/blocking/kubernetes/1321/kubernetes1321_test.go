@@ -93,20 +93,20 @@ func testMuxWatcherClose() {
 	w.Stop()
 }
 
-///
-/// G1 							G2
-/// testMuxWatcherClose()
-/// NewMux()
-/// 							m.loop()
-/// 							m.distribute()
-/// 							m.lock.Lock()
-/// 							w.result <- true
-/// w := m.Watch()
-/// w.Stop()
-/// mw.m.stopWatching()
-/// m.lock.Lock()
-/// ---------------G1,G2 deadlock---------------
-///
+// /
+// / G1 							G2
+// / testMuxWatcherClose()
+// / NewMux()
+// / 							m.loop()
+// / 							m.distribute()
+// / 							m.lock.Lock()
+// / 							w.result <- true
+// / w := m.Watch()
+// / w.Stop()
+// / mw.m.stopWatching()
+// / m.lock.Lock()
+// / ---------------G1,G2 deadlock---------------
+// /
 func TestKubernetes1321(t *testing.T) {
 	go testMuxWatcherClose() // G1
 }

@@ -97,17 +97,17 @@ func NewStore() *Store {
 	return store
 }
 
-/// G1 										G2
-/// store.ForceRaftLogScanAndProcess()
-/// s.mu.RLock()
-/// s.raftLogQueue.MaybeAdd()
-/// bq.impl.shouldQueue()
-/// getTruncatableIndexes()
-/// r.store.RaftStatus()
-/// 										store.processRaft()
-/// 										s.mu.Lock()
-/// s.mu.RLock()
-/// ----------------------G1,G2 deadlock---------------------
+// / G1 										G2
+// / store.ForceRaftLogScanAndProcess()
+// / s.mu.RLock()
+// / s.raftLogQueue.MaybeAdd()
+// / bq.impl.shouldQueue()
+// / getTruncatableIndexes()
+// / r.store.RaftStatus()
+// / 										store.processRaft()
+// / 										s.mu.Lock()
+// / s.mu.RLock()
+// / ----------------------G1,G2 deadlock---------------------
 func TestCockroach3710(t *testing.T) {
 	store := NewStore()
 	go store.ForceRaftLogScanAndProcess() // G1

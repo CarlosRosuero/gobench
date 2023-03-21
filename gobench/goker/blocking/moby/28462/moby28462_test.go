@@ -102,18 +102,18 @@ func NewDaemonAndContainer() (*Daemon, *Container) {
 	return d, c
 }
 
-///
-/// G1							G2
-/// monitor()
-/// handleProbeResult()
-/// 							d.StateChanged()
-/// 							c.Lock()
-/// 							d.updateHealthMonitorElseBranch()
-/// 							h.CloseMonitorChannel()
-/// 							s.stop <- struct{}{}
-/// c.Lock()
-/// ----------------------G1,G2 deadlock------------------------
-///
+// /
+// / G1							G2
+// / monitor()
+// / handleProbeResult()
+// / 							d.StateChanged()
+// / 							c.Lock()
+// / 							d.updateHealthMonitorElseBranch()
+// / 							h.CloseMonitorChannel()
+// / 							s.stop <- struct{}{}
+// / c.Lock()
+// / ----------------------G1,G2 deadlock------------------------
+// /
 func TestMoby28462(t *testing.T) {
 	d, c := NewDaemonAndContainer()
 	go monitor(c, c.State.Health.OpenMonitorChannel()) // G1

@@ -125,24 +125,24 @@ func setupAuthStore() (store *authStore, teardownfunc func()) {
 	return as, tearDown
 }
 
-///
-///	G1										G2
-///											stk.run()
-///	ts.assignSimpleTokenToUser()
-///	t.simpleTokensMu.Lock()
-///	t.simpleTokenKeeper.addSimpleToken()
-///	tm.addSimpleTokenCh <- true
-///											<-tm.addSimpleTokenCh
-///	t.simpleTokensMu.Unlock()
-///	ts.assignSimpleTokenToUser()
-///	...										...
-///	t.simpleTokensMu.Lock()
-///											<-tokenTicker.C
-///	tm.addSimpleTokenCh <- true
-///											tm.deleteTokenFunc()
-///											t.simpleTokensMu.Lock()
-///------------------------------------G1,G2 deadlock---------------------------------------------
-///
+// /
+// /	G1										G2
+// /											stk.run()
+// /	ts.assignSimpleTokenToUser()
+// /	t.simpleTokensMu.Lock()
+// /	t.simpleTokenKeeper.addSimpleToken()
+// /	tm.addSimpleTokenCh <- true
+// /											<-tm.addSimpleTokenCh
+// /	t.simpleTokensMu.Unlock()
+// /	ts.assignSimpleTokenToUser()
+// /	...										...
+// /	t.simpleTokensMu.Lock()
+// /											<-tokenTicker.C
+// /	tm.addSimpleTokenCh <- true
+// /											tm.deleteTokenFunc()
+// /											t.simpleTokensMu.Lock()
+// /------------------------------------G1,G2 deadlock---------------------------------------------
+// /
 func TestEtcd7492(t *testing.T) {
 	as, tearDown := setupAuthStore()
 	defer tearDown()

@@ -51,20 +51,20 @@ func NewStatusManager() *statusManager {
 	}
 }
 
-/// G1 						G2							G3
-/// s.Start()
-/// s.syncBatch()
-/// 						s.SetPodStatus()
-/// <-s.podStatusChannel
-/// 						s.podStatusesLock.Lock()
-/// 						s.podStatusChannel <- true
-/// 						s.podStatusesLock.Unlock()
-/// 						return
-/// s.DeletePodStatus()
-/// 													s.podStatusesLock.Lock()
-/// 													s.podStatusChannel <- true
-/// s.podStatusesLock.Lock()
-/// -----------------------------G1,G3 deadlock----------------------------
+// / G1 						G2							G3
+// / s.Start()
+// / s.syncBatch()
+// / 						s.SetPodStatus()
+// / <-s.podStatusChannel
+// / 						s.podStatusesLock.Lock()
+// / 						s.podStatusChannel <- true
+// / 						s.podStatusesLock.Unlock()
+// / 						return
+// / s.DeletePodStatus()
+// / 													s.podStatusesLock.Lock()
+// / 													s.podStatusChannel <- true
+// / s.podStatusesLock.Lock()
+// / -----------------------------G1,G3 deadlock----------------------------
 func TestKubernetes10182(t *testing.T) {
 	s := NewStatusManager()
 	go s.Start()

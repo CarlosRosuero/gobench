@@ -66,7 +66,7 @@ func (r *Replica) beginCmds(ctx context.Context) {
 	}
 }
 
-/// helper goroutine, not present in the real bug.
+// / helper goroutine, not present in the real bug.
 func (r *Replica) sendChans(ctx context.Context) {
 	for _, ch := range r.chans {
 		select {
@@ -88,18 +88,18 @@ func NewReplica() *Replica {
 	return r
 }
 
-///
-/// G1					G2				helper goroutine
-/// 									r.sendChans()
-/// r.beginCmds()
-/// 									ch1 <- true
-/// <- ch1
-///										ch2 <- true
-///	...					...				...
-///						cancel()
-///	<- ch1
-///	------------------G1 leak--------------------------
-///
+// /
+// / G1					G2				helper goroutine
+// / 									r.sendChans()
+// / r.beginCmds()
+// / 									ch1 <- true
+// / <- ch1
+// /										ch2 <- true
+// /	...					...				...
+// /						cancel()
+// /	<- ch1
+// /	------------------G1 leak--------------------------
+// /
 func TestCockroach10790(t *testing.T) {
 	r := NewReplica()
 	ctx, cancel := context.WithCancel(context.Background())

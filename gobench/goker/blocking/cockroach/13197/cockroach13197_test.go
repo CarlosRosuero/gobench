@@ -47,12 +47,12 @@ func (tx *Tx) close() {
 	tx.cancel()
 }
 
-/// G1 				G2
-/// begin()
-/// 				awaitDone()
-/// 				<-tx.ctx.Done()
-/// return
-/// -----------G2 leak-------------
+// / G1 				G2
+// / begin()
+// / 				awaitDone()
+// / 				<-tx.ctx.Done()
+// / return
+// / -----------G2 leak-------------
 func TestCockroach13197(t *testing.T) {
 	db := &DB{}
 	db.begin(context.Background()) // G1

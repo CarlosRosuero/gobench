@@ -258,7 +258,7 @@ func rsyncSrcToDst(src string, dst string, force bool) {
 
 	if !force {
 		dst = filepath.Dir(dst)
-		args[len(args) - 1] = dst
+		args[len(args)-1] = dst
 	}
 
 	if _, err := os.Stat(dst); os.IsNotExist(err) {

@@ -159,7 +159,7 @@ func TestCockroach7504(t *testing.T) {
 
 	mgr := NewLeaseManager(nc, ts)
 	var wg sync.WaitGroup
-	
+
 	wg.Add(2)
 	// G1
 	go func() {
@@ -174,6 +174,6 @@ func TestCockroach7504(t *testing.T) {
 		mgr.Release(lset.find(0))
 		wg.Done()
 	}()
-	
+
 	wg.Wait()
 }

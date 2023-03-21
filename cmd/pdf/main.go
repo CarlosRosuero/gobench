@@ -167,15 +167,15 @@ func main() {
 	}
 
 	/*
-	fs := http.FileServer(http.Dir(root))
-	http.Handle("/", fs)
+		fs := http.FileServer(http.Dir(root))
+		http.Handle("/", fs)
 
-	log.Println("Listening on :2021...")
-	err = http.ListenAndServe(":2021", nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	 */
+		log.Println("Listening on :2021...")
+		err = http.ListenAndServe(":2021", nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+	*/
 
 	output := filepath.Join(os.Getenv("GOBENCH_ROOT_PATH"), "artifact.pdf")
 	if out, err := exec.Command("wkhtmltopdf", "index.html", output).CombinedOutput(); err != nil {

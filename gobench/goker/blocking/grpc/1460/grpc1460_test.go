@@ -50,15 +50,15 @@ func (t *http2Client) NewStream() {
 	t.mu.Unlock()
 }
 
-///
-/// G1 						G2
-/// client.keepalive()
-/// 						client.NewStream()
-/// t.mu.Lock()
-/// <-t.awakenKeepalive
-/// 						t.mu.Lock()
-/// ---------------G1, G2 deadlock--------------
-///
+// /
+// / G1 						G2
+// / client.keepalive()
+// / 						client.NewStream()
+// / t.mu.Lock()
+// / <-t.awakenKeepalive
+// / 						t.mu.Lock()
+// / ---------------G1, G2 deadlock--------------
+// /
 func TestGrpc1460(t *testing.T) {
 	client := &http2Client{
 		awakenKeepalive: make(chan struct{}),

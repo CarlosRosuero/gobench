@@ -73,25 +73,25 @@ func doRounds(rcs []roundClient, rounds int) {
 	wg.Wait()
 }
 
-///
-/// G1						G2 (leader)					G3 (follower)
-/// runElectionFunc()
-/// doRounds()
-/// wg.Wait()
-/// 						...
-/// 						mu.Lock()
-/// 						rc.validate()
-/// 						rcNextc = nextc
-/// 						mu.Unlock()					...
-/// 													mu.Lock()
-/// 													rc.validate()
-/// 													mu.Unlock()
-/// 													mu.Lock()
-/// 													rc.release()
-/// 													<-rcNextc
-/// 						mu.Lock()
-/// -------------------------G1,G2,G3 deadlock--------------------------
-///
+// /
+// / G1						G2 (leader)					G3 (follower)
+// / runElectionFunc()
+// / doRounds()
+// / wg.Wait()
+// / 						...
+// / 						mu.Lock()
+// / 						rc.validate()
+// / 						rcNextc = nextc
+// / 						mu.Unlock()					...
+// / 													mu.Lock()
+// / 													rc.validate()
+// / 													mu.Unlock()
+// / 													mu.Lock()
+// / 													rc.release()
+// / 													<-rcNextc
+// / 						mu.Lock()
+// / -------------------------G1,G2,G3 deadlock--------------------------
+// /
 func TestEtcd7902(t *testing.T) {
 	go runElectionFunc() // G1
 }

@@ -136,23 +136,23 @@ func NewClientConn() *ClientConn {
 	return cc
 }
 
-///
-/// G1 					G2							G3
-/// balancer.Start()
-/// 					rr.watchAddrUpdates()
-/// return
-/// 												lbWatcher()
-/// 												<-rr.addrCh
-/// 					rr.mu.Lock()
-/// 					rr.addrCh <- true
-/// 					rr.mu.Unlock()
-/// 												c.tearDown()
-/// 												ac.down()
-/// 					rr.mu.Lock()
-/// 												rr.mu.Lock()
-/// 					rr.addrCh <- true
-/// ----------------------G2, G3 deadlock-----------------------
-///
+// /
+// / G1 					G2							G3
+// / balancer.Start()
+// / 					rr.watchAddrUpdates()
+// / return
+// / 												lbWatcher()
+// / 												<-rr.addrCh
+// / 					rr.mu.Lock()
+// / 					rr.addrCh <- true
+// / 					rr.mu.Unlock()
+// / 												c.tearDown()
+// / 												ac.down()
+// / 					rr.mu.Lock()
+// / 												rr.mu.Lock()
+// / 					rr.addrCh <- true
+// / ----------------------G2, G3 deadlock-----------------------
+// /
 func TestGrpc1353(t *testing.T) {
 	HelpCh = make(chan struct{})
 	cc := NewClientConn()

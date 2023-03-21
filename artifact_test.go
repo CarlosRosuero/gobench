@@ -58,7 +58,7 @@ func defaultSuiteConfig(name string, t SubBenchType) SuiteConfig {
 		MustFork:      true,
 		Jobs:          defaultJobs(),
 	}
-	if t&GoKerBlocking | t &GoKerNonBlocking != 0 {
+	if t&GoKerBlocking|t&GoKerNonBlocking != 0 {
 		ret.Timeout = 10 * time.Minute // 10 minutes is enough
 	}
 	if name == "dingo-hunter" {
@@ -89,7 +89,6 @@ func TestMain(m *testing.M) {
 	}
 	m.Run()
 }
-
 
 func TestArtifactGoKer(t *testing.T) {
 	tests := []struct {
@@ -194,7 +193,7 @@ func TestArtifactSimpleSpecific(t *testing.T) {
 	log.Println(CountValueForFig10(s))
 }
 
-func TestArtifactSimpleRace( t *testing.T) {
+func TestArtifactSimpleRace(t *testing.T) {
 	suite := NewSuite(defaultSuiteConfig("go-rd", GoRealNonBlocking))
 	suite.Run()
 	log.Println(CountValueForFig10(suite))

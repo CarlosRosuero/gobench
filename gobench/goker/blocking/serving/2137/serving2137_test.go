@@ -87,29 +87,33 @@ func unlockAll(requests []request) {
 	}
 }
 
-//
 // G1                           G2                      G3
 // b.concurrentRequests(2)
 // b.concurrentRequest()
 // r.lock.Lock()
-//                                                      start.Done()
+//
+//	start.Done()
+//
 // start.Wait()
 // b.concurrentRequest()
 // r.lock.Lock()
-//                              start.Done()
+//
+//	start.Done()
+//
 // start.Wait()
 // unlockAll(locks)
 // unlock(lc)
 // req.lock.Unlock()
 // ok := <-req.accepted
-//                              b.Maybe()
-//                              b.activeRequests <- t
-//                              thunk()
-//                              r.lock.Lock()
-//                                                      b.Maybe()
-//                                                      b.activeRequests <- t
-// ----------------------------G1,G2,G3 deadlock-----------------------------
 //
+//	b.Maybe()
+//	b.activeRequests <- t
+//	thunk()
+//	r.lock.Lock()
+//	                        b.Maybe()
+//	                        b.activeRequests <- t
+//
+// ----------------------------G1,G2,G3 deadlock-----------------------------
 func TestServing2137(t *testing.T) {
 	b := NewBreaker(1, 1)
 

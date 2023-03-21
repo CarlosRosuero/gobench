@@ -135,31 +135,31 @@ func NewCacher() *Cacher {
 	return cacher
 }
 
-///
-/// G1								G2								G3
-/// NewCacher()
-/// watchCache.SetOnReplace()
-/// watchCache.SetOnEvent()
-/// 								cacher.startCaching()
-///									c.Lock()
-/// 								c.reflector.ListAndWatch()
-/// 								r.syncWith()
-/// 								r.store.Replace()
-/// 								w.Lock()
-/// 								w.onReplace()
-/// 								cacher.initOnce.Do()
-/// 								cacher.Unlock()
-/// return cacher
-///																	c.watchCache.Add()
-///																	w.processEvent()
-///																	w.Lock()
-///									cacher.startCaching()
-///									c.Lock()
-///									...
-///																	c.Lock()
-///									w.Lock()
-///--------------------------------G2,G3 deadlock-------------------------------------
-///
+// /
+// / G1								G2								G3
+// / NewCacher()
+// / watchCache.SetOnReplace()
+// / watchCache.SetOnEvent()
+// / 								cacher.startCaching()
+// /									c.Lock()
+// / 								c.reflector.ListAndWatch()
+// / 								r.syncWith()
+// / 								r.store.Replace()
+// / 								w.Lock()
+// / 								w.onReplace()
+// / 								cacher.initOnce.Do()
+// / 								cacher.Unlock()
+// / return cacher
+// /																	c.watchCache.Add()
+// /																	w.processEvent()
+// /																	w.Lock()
+// /									cacher.startCaching()
+// /									c.Lock()
+// /									...
+// /																	c.Lock()
+// /									w.Lock()
+// /--------------------------------G2,G3 deadlock-------------------------------------
+// /
 func TestKubernetes13135(t *testing.T) {
 	StopChannel = make(chan struct{})
 	c := NewCacher()         // G1

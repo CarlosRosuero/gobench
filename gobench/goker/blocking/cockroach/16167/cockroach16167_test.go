@@ -86,14 +86,14 @@ func NewExectorAndSession() (*Executor, *Session) {
 	return e, session
 }
 
-/// G1 							G2
-/// e.Start()
-/// e.updateSystemConfig()
-/// 							e.execParsed()
-/// 							e.systemConfigCond.L.Lock()
-/// e.systemConfigMu.Lock()
-/// 							e.systemConfigMu.RLock()
-/// ----------------------G1,G2 deadlock--------------------
+// / G1 							G2
+// / e.Start()
+// / e.updateSystemConfig()
+// / 							e.execParsed()
+// / 							e.systemConfigCond.L.Lock()
+// / e.systemConfigMu.Lock()
+// / 							e.systemConfigMu.RLock()
+// / ----------------------G1,G2 deadlock--------------------
 func TestCockroach16167(t *testing.T) {
 	e, s := NewExectorAndSession()
 	e.systemConfigCond = sync.NewCond(e.systemConfigMu.RLocker())

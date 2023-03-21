@@ -3,8 +3,8 @@ package gobench
 import (
 	"io/ioutil"
 	"path/filepath"
-	"testing"
 	"strings"
+	"testing"
 	"time"
 )
 

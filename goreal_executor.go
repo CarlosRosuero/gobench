@@ -10,12 +10,14 @@ import (
 	"github.com/hashicorp/go-version"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
+	"trall/utils"
 )
 
 type GoRealExecuter struct {
@@ -97,6 +99,10 @@ func newGoRealExecuter(config ExecBugConfig) *GoRealExecuter {
 	if len(g.Config.TestFunc) != 0 {
 		execCmd = append(execCmd, "-test.run", g.Config.TestFunc)
 	}
+
+	execCmd = append(execCmd, "-test.trace", "/tmp/trace.out")
+
+	println("execCmd: ", strings.Join(execCmd, " "))
 
 	g.ExecCmd = execCmd
 
@@ -279,10 +285,10 @@ func (g *GoRealExecuter) Run() *SingleRunResult {
 	}
 
 	/*
-	if !g.needRunOneByOne() {
-		return g.runWithRecreateCntr()
-	}
-	 */
+		if !g.needRunOneByOne() {
+			return g.runWithRecreateCntr()
+		}
+	*/
 
 	if g.cntrCtx == nil {
 		g.cntrCtx = NewCntrContext(CntrContextConfig{
@@ -320,6 +326,9 @@ func (g *GoRealExecuter) Run() *SingleRunResult {
 			result.Command = fmt.Sprintf("[%v times] %s", i, result.Command)
 		}
 	})
+
+	command := exec.Command("sudo", "docker", "cp", g.cntrCtx.Name+":/tmp/trace.out", utils.PathToTrace(g.Bug.Type.String(), g.Bug.SubType, g.Bug.SubSubType, g.Bug.ID))
+	println(command.Output())
 
 	if failed {
 		result.FailFirst = passed + 1

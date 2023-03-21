@@ -105,13 +105,13 @@ func startResourceQuotaController() {
 	resourceQuotaController.HelperSignals()
 }
 
-/// G1 						G2						G3
-/// ...						...						Sync()
-/// rq.workerLock.RLock()
-/// q.cond.Wait()
-/// 												rq.workerLock.Lock()
-/// 						rq.workerLock.RLock()
-///
+// / G1 						G2						G3
+// / ...						...						Sync()
+// / rq.workerLock.RLock()
+// / q.cond.Wait()
+// / 												rq.workerLock.Lock()
+// / 						rq.workerLock.RLock()
+// /
 func TestKubernetes58107(t *testing.T) {
 	startResourceQuotaController()
 }

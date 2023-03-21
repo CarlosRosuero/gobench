@@ -60,17 +60,17 @@ func NewIdleAwareFramer() *idleAwareFramer {
 	}
 }
 
-///
-/// G1						G2					helper goroutine
-/// i.monitor()
-/// <-i.conn.closeChan
-///							i.WriteFrame()
-///							i.writeLock.Lock()
-///							i.resetChan <-
-///												i.conn.closeChan<-
-///	i.writeLock.Lock()
-///	----------------------G1,G2 deadlock------------------------
-///
+// /
+// / G1						G2					helper goroutine
+// / i.monitor()
+// / <-i.conn.closeChan
+// /							i.WriteFrame()
+// /							i.writeLock.Lock()
+// /							i.resetChan <-
+// /												i.conn.closeChan<-
+// /	i.writeLock.Lock()
+// /	----------------------G1,G2 deadlock------------------------
+// /
 func TestKubernetes6632(t *testing.T) {
 	i := NewIdleAwareFramer()
 
