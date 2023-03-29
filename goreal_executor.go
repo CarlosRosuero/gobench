@@ -17,6 +17,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"trall/trason"
 	"trall/utils"
 )
 
@@ -101,8 +102,6 @@ func newGoRealExecuter(config ExecBugConfig) *GoRealExecuter {
 	}
 
 	execCmd = append(execCmd, "-test.trace", "/tmp/trace.out")
-
-	println("execCmd: ", strings.Join(execCmd, " "))
 
 	g.ExecCmd = execCmd
 
@@ -327,8 +326,15 @@ func (g *GoRealExecuter) Run() *SingleRunResult {
 		}
 	})
 
-	command := exec.Command("sudo", "docker", "cp", g.cntrCtx.Name+":/tmp/trace.out", utils.PathToTrace(g.Bug.Type.String(), g.Bug.SubType, g.Bug.SubSubType, g.Bug.ID))
-	println(command.Output())
+	pathToTrace := utils.PathToTrace(g.Bug.Type.String(), g.Bug.SubType, g.Bug.SubSubType, g.Bug.ID, result.PositiveCheckFunc(result))
+
+	if err := exec.Command("docker", "cp", g.cntrCtx.Name+":/tmp/trace.out", pathToTrace).Run(); err != nil {
+		panic(err)
+	}
+
+	trason.Trason(pathToTrace)
+
+	fmt.Println("Trasoned", g.Bug.ID)
 
 	if failed {
 		result.FailFirst = passed + 1

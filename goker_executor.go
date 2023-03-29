@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"trall/trason"
 	"trall/utils"
 )
 
@@ -62,8 +63,16 @@ func (g *GoKerExecuter) Build() {
 }
 
 func (g *GoKerExecuter) Run() *SingleRunResult {
+	tmpFile, err := os.CreateTemp("", g.Bug.ID)
+	if err != nil {
+		panic(err)
+	}
+	err = tmpFile.Close()
+	if err != nil {
+		panic(err)
+	}
 	command := "%v -test.v -test.count %v -test.failfast -test.timeout %v -test.trace %s"
-	vals := []interface{}{g.Binary, g.Count, g.Timeout, utils.PathToTrace(g.Bug.Type.String(), g.Bug.SubType, g.Bug.SubSubType, g.Bug.ID)}
+	vals := []interface{}{g.Binary, g.Count, g.Timeout, tmpFile.Name()}
 	if g.Cpu != 0 {
 		command += " -test.cpu %v"
 		vals = append(vals, g.Cpu)
@@ -72,7 +81,6 @@ func (g *GoKerExecuter) Run() *SingleRunResult {
 
 	result := g.next()
 	result.Command = strings.Join(args, " ")
-	//fmt.Println(result.Command)
 	result.process(func() {
 		var err error
 		result.Logs, err = exec.Command(args[0], args[1:]...).CombinedOutput()
@@ -80,6 +88,17 @@ func (g *GoKerExecuter) Run() *SingleRunResult {
 			result.ExitCode = 1
 		}
 	})
+
+	pathToTrace := utils.PathToTrace(g.Bug.Type.String(), g.Bug.SubType, g.Bug.SubSubType, g.Bug.ID, result.PositiveCheckFunc(result))
+
+	fmt.Println(g.Bug.ID)
+
+	err = os.Rename(tmpFile.Name(), pathToTrace)
+	if err != nil {
+		panic(err)
+	}
+
+	trason.Trason(pathToTrace)
 
 	return result
 }
