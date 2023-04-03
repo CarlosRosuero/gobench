@@ -63,7 +63,11 @@ func (g *GoKerExecuter) Build() {
 }
 
 func (g *GoKerExecuter) Run() *SingleRunResult {
-	tmpFile, err := os.CreateTemp("", g.Bug.ID)
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	tmpFile, err := os.CreateTemp(filepath.Join(filepath.Dir(wd), "results", "tmp"), g.Bug.ID)
 	if err != nil {
 		panic(err)
 	}
