@@ -1,0 +1,23 @@
+commit c2479f6ebf288fe8660ea64f51ac80cfdda3011d
+Author: lzhfromutsc <lzhfromustc@gmail.com>
+Date:   Mon Jul 1 11:38:38 2019 -0700
+
+    Fixed the inconsistence and also a potential data race in pkg/ioutils/bytespipe.go: bp.closeErr is read/write 8 times; 7 out of 8 times it is protected by bp.mu.Lock(); 1 out of 8 times it is read without a Lock
+    
+    Signed-off-by: lzhfromutsc <lzhfromustc@gmail.com>
+
+diff --git b/pkg/ioutils/bytespipe.go a/pkg/ioutils/bytespipe.go
+index 87514b643d..d4bbf3c9dc 100644
+--- b/pkg/ioutils/bytespipe.go
++++ a/pkg/ioutils/bytespipe.go
+@@ -128,9 +128,8 @@ func (bp *BytesPipe) Read(p []byte) (n int, err error) {
+ 	bp.mu.Lock()
+ 	if bp.bufLen == 0 {
+ 		if bp.closeErr != nil {
+-			err := bp.closeErr
+ 			bp.mu.Unlock()
+-			return 0, err
++			return 0, bp.closeErr
+ 		}
+ 		bp.wait.Wait()
+ 		if bp.bufLen == 0 && bp.closeErr != nil {

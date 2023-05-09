@@ -151,7 +151,7 @@ func (g *GoRealExecuter) Build() {
 		defer tmpCntr.Cancel()
 
 		// Build
-		if g.Bug.ID == "moby_27037" {
+		if g.Bug.ID == "moby_27037" || g.Bug.ID == "moby_c2479f6" {
 			tmpCntr.Exec(strings.Split(g.Config.TestFunc, " "), g.Config.TestEnvs)
 
 			// Commit
@@ -328,13 +328,14 @@ func (g *GoRealExecuter) Run() *SingleRunResult {
 
 	pathToTrace := utils.PathToTrace(g.Bug.Type.String(), g.Bug.SubType, g.Bug.SubSubType, g.Bug.ID, result.PositiveCheckFunc(result))
 
-	if err := exec.Command("docker", "cp", g.cntrCtx.Name+":/tmp/trace.out", pathToTrace).Run(); err != nil {
-		panic(err)
+	if g.Bug.ID == "moby_c2479f6" {
+		trason.Trason("/tmp/trace/trace.out", strings.Replace(pathToTrace, ".trace", ".json", 1))
+	} else {
+		if err := exec.Command("docker", "cp", g.cntrCtx.Name+":/tmp/trace.out", pathToTrace).Run(); err != nil {
+			panic(err)
+		}
+		trason.Trason(pathToTrace)
 	}
-
-	trason.Trason(pathToTrace)
-
-	fmt.Println("Trasoned", g.Bug.ID)
 
 	if failed {
 		result.FailFirst = passed + 1

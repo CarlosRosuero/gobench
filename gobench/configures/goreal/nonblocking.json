@@ -739,6 +739,32 @@
     "build_commands": [],
     "post_commands": []
   },
+  "moby_c2479f6": {
+    "type": "Struct Field",
+    "goversion": "1.13",
+    "copy_dep": "--from=docker/buildx-bin /buildx /usr/libexec/docker/cli-plugins/docker-buildx",
+    "dev_deps": [],
+    "pkg_deps": [],
+    "git_deps": [],
+    "repo_url": "https://github.com/moby/moby",
+    "src_path": "github.com/moby/moby",
+    "pull_sha": "c2479f6ebf288fe8660ea64f51ac80cfdda3011d",
+    "testfunc": "make test-unit",
+    "testenvs": [
+      "TESTFLAGS=-test.run TestBytesPipe -test.trace /tmp/trace.out",
+      "TESTDIRS=./pkg/ioutils"
+    ],
+    "workdir": ".",
+    "pred_stage_build_command": "",
+    "pred_commands": [
+      "sed -i \"33aRUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list\" Dockerfile",
+      "sed -i \"34aRUN sed -i 's|security.debian.org|archive.debian.org/|g' /etc/apt/sources.list\" Dockerfile",
+      "sed -i \"35aRUN sed -i '/stretch-updates/d' /etc/apt/sources.list\" Dockerfile",
+      "sed -i \"92aDOCKER_MOUNT := \\$(DOCKER_MOUNT) -v /tmp/trace:/tmp\" Makefile"
+    ],
+    "build_commands": [],
+    "post_commands": []
+  },
   "serving_3068": {
     "type": "Go-Specific",
     "subtype": "Channel Misuse",
