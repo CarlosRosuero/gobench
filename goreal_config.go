@@ -45,6 +45,7 @@ type GoRealBugConfig struct {
 	SubType string `json:"subtype"`
 
 	GoVersion string        `json:"goversion"`
+	CopyDep   string        `json:"copy_dep"`
 	DevDeps   []string      `json:"dev_deps"`
 	PkgDeps   []PkgDep      `json:"pkg_deps"`
 	GitDeps   []GitDep      `json:"git_deps"`
@@ -86,6 +87,10 @@ func NewGoRealBugConfig(bug Bug, config string) *GoRealBugConfig {
 }
 
 var DefaultTemp = `FROM golang:{{.GoVersion}}
+{{if .HasCopyDep}}
+# Copy dependency
+COPY {{.CopyDep}}
+{{- end}}
 # Clone the project to local
 RUN git clone {{.RepoUrl}}.git /go/src/{{.SrcPath}}
 {{if .HasDevDeps}}
@@ -136,10 +141,10 @@ WORKDIR /go/src/{{.SrcPath}}/{{.WorkDir}}
 func (c *GoRealBugConfig) UpdateDockerfile() {
 	type ConfigWarpper struct {
 		*GoRealBugConfig
-		HasDevDeps, HasGitDeps, HasPkgDeps  bool
-		HasPredCMD, HasBuildCMD, HasPostCMD bool
-		HasGoProxy, HasHttpProxy            bool
-		HttpProxy                           string
+		HasCopyDep, HasDevDeps, HasGitDeps, HasPkgDeps bool
+		HasPredCMD, HasBuildCMD, HasPostCMD            bool
+		HasGoProxy, HasHttpProxy                       bool
+		HttpProxy                                      string
 
 		BugPath, StrPredBuildCmds, StrBuildCmds, StrPostBuildCmds string
 	}
@@ -161,6 +166,7 @@ func (c *GoRealBugConfig) UpdateDockerfile() {
 
 	var warpper = ConfigWarpper{
 		GoRealBugConfig:  c,
+		HasCopyDep:       len(c.CopyDep) > 0,
 		HasDevDeps:       len(c.DevDeps) > 0,
 		HasGitDeps:       len(c.GitDeps) > 0,
 		HasPkgDeps:       len(c.PkgDeps) > 0,
