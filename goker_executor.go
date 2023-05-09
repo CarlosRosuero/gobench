@@ -1,6 +1,8 @@
 package gobench
 
 import (
+	"example.com/me/trall/trason"
+	"example.com/me/trall/utils"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -8,8 +10,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"trall/trason"
-	"trall/utils"
 )
 
 type GoKerExecuter struct {

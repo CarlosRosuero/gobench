@@ -5,9 +5,11 @@ go 1.13
 replace (
 	github.com/Sirupsen/logrus v1.7.0 => github.com/sirupsen/logrus v1.7.0
 	golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
+	example.com/me/trall => ../trall
 )
 
 require (
+	example.com/me/trall v0.0.0
 	github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78 // indirect
 	github.com/Microsoft/go-winio v0.4.16 // indirect
 	github.com/Microsoft/hcsshim v0.8.11 // indirect

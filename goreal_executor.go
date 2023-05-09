@@ -2,6 +2,8 @@ package gobench
 
 import (
 	"context"
+	"example.com/me/trall/trason"
+	"example.com/me/trall/utils"
 	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -17,8 +19,6 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
-	"trall/trason"
-	"trall/utils"
 )
 
 type GoRealExecuter struct {
